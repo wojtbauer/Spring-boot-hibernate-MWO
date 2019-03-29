@@ -70,14 +70,18 @@ public class DatabaseConnector {
 		String hql = "FROM School S WHERE S.id=" + schoolId;
 		Query query = session.createQuery(hql);
 		List<School> results = query.list();
+
+		
 		Transaction transaction = session.beginTransaction();
-		if (results.size() == 0) {
+		if(results.size() == 0) {
 			session.save(schoolClass);
+
 		} else {
 			School school = results.get(0);
 			school.addClass(schoolClass);
 			session.save(school);
-		}
+
+		}			
 		transaction.commit();
 	}
 	
@@ -89,6 +93,68 @@ public class DatabaseConnector {
 		for (SchoolClass s : results) {
 			session.delete(s);
 		}
+		transaction.commit();
+	}
+
+	public Iterable<Student> getStudents() {
+		String hql = "FROM Student";
+		Query query = session.createQuery(hql);
+		List students = query.list();
+		
+		return students;
+	}
+	
+	
+	public void addStudent(Student student, String schoolClassId) {
+		String hql = "FROM SchoolClass S WHERE S.id=" + schoolClassId;
+		Query query = session.createQuery(hql);
+		List<SchoolClass> results = query.list();
+		Transaction transaction = session.beginTransaction();
+		if(results.size() == 0) {
+			session.save(student);
+		} else {
+			SchoolClass schoolClass = results.get(0);
+			schoolClass.addStudent(student);
+			session.save(schoolClass);
+		}	
+		transaction.commit();
+	}
+	
+	public void deleteStudent(String studentId) {
+		String hql = "FROM Student S WHERE S.id=" + studentId;
+		Query query = session.createQuery(hql);
+		List<Student> results = query.list();
+		Transaction transaction = session.beginTransaction();
+		for (Student s : results) {
+			session.delete(s);
+		}
+		
+		transaction.commit();
+	}
+	
+
+	public Student getStudent(String studentId) {
+		Student retStudent = null;
+		String hql = "FROM Student S WHERE S.id=" + studentId;
+		Query query = session.createQuery(hql);
+		List<Student> results = query.list();
+		Transaction transaction = session.beginTransaction();
+		for (Student s : results) {
+			retStudent = s;
+		}
+		
+		return retStudent;
+	}
+
+	public void saveStudent(String studentId) {
+		String hql = "FROM Student S WHERE S.id=" + studentId;
+		Query query = session.createQuery(hql);
+		List<Student> results = query.list();
+		Transaction transaction = session.beginTransaction();
+		for (Student s : results) {
+			session.save(s);
+		}
+		
 		transaction.commit();
 	}
 }
